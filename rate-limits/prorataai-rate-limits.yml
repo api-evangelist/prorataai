@@ -1,0 +1,58 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  https://platform.gist.ai/docs/gist-content-api (documented) +
+  openapi/prorataai-openapi.json (declared headers) +
+  live response headers observed on https://api.gist.ai/v1/health and /v1/publishers
+limit_count: 1
+exhaustion_status: 429
+headers:
+- name: X-RateLimit-Limit
+  description: Maximum requests allowed in the current time window.
+  type: integer
+  declared_in: components.headers of the published OpenAPI
+  observed: 'listed in Access-Control-Expose-Headers on live api.gist.ai responses'
+- name: X-RateLimit-Remaining
+  description: Number of requests remaining in the current time window.
+  type: integer
+  declared_in: components.headers of the published OpenAPI
+  observed: 'listed in Access-Control-Expose-Headers on live api.gist.ai responses'
+- name: X-RateLimit-Reset
+  description: Unix timestamp when the rate limit resets.
+  type: integer
+  declared_in: components.headers of the published OpenAPI
+  observed: 'listed in Access-Control-Expose-Headers on live api.gist.ai responses'
+- name: Retry-After
+  present: false
+  note: Not published and not observed.
+rate_limits:
+- api: Gist Content API (Ingest)
+  scope: per-api-key (issued at Publisher Group level)
+  window: 1 minute
+  limit: 10
+  burst: null
+  unit: requests
+  status_on_exhaustion: 429
+  source: https://platform.gist.ai/docs/gist-content-api
+  note: Documented as the default; the docs say a higher limit can be requested from support.
+- api: Prorata API Service
+  scope: per-organization
+  window: null
+  limit: null
+  burst: null
+  unit: requests
+  status_on_exhaustion: 429
+  source: openapi/prorataai-openapi.json
+  note: >-
+    Every rate-limited operation states "subject to rate limiting based on your
+    organization's settings" and declares the three X-RateLimit-* response headers, but
+    NO numeric limit or window is published — the value is per-account and only readable
+    at runtime. 12 of 16 operations are marked rate-limited; /v1/health, GET /,
+    GET /v1/publishers and GET /v1/publishers/{id} are not.
+x-evidence:
+- url: https://api.gist.ai/v1/health
+  http_status: 503
+  observed_header: 'Access-Control-Expose-Headers: X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset,X-Validation-Status,X-Validation-Info'
+- url: https://api.gist.ai/v1/publishers
+  http_status: 401
+  observed_header: 'Access-Control-Expose-Headers: X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset,X-Validation-Status,X-Validation-Info'

@@ -1,0 +1,59 @@
+generated: '2026-08-26'
+method: searched
+source: https://platform.gist.ai/docs/quick-start-using-widgets
+note: >-
+  Gist Answers is sold as an embeddable client-side component first and an API second.
+  The whole documented no-code path is a single module script plus a custom element.
+families:
+- name: Gist Answers chat widget
+  kind: web-component
+  element: <gist-chat-widget>
+  loader: https://cdn.gist.ai/chatWidget.js
+  loader_sandbox: https://cdn.sandbox.gist.ai/chatWidget.js
+  docs: https://platform.gist.ai/docs/quick-start-using-widgets
+  attributes:
+  - name: api-key
+    required: true
+    description: The ProRata API key issued to the publisher.
+  - name: user-id
+    required: true
+    description: The publisher's domain or organization identifier.
+  - name: default-placeholder
+    required: false
+    description: Placeholder copy shown in the AI search box.
+  - name: floating
+    required: false
+    description: >-
+      Pins the search box to the bottom centre of the browser window and renders the
+      answer in a modal window.
+  - name: sticky-prompt
+    required: false
+    description: Keeps the search box pinned on the standalone AI results page.
+  display_modes:
+  - floating search box, answer in a modal window
+  - floating search box, answer on a standalone page
+  - inline search box, answer on a standalone page
+  related_docs:
+  - https://platform.gist.ai/docs/widget-usage-guidelines
+  - https://platform.gist.ai/docs/customizing-look-and-feel
+  - https://platform.gist.ai/docs/displaying-search-results-on-new-page
+  - https://platform.gist.ai/docs/ads-within-gist-answers
+- name: Gist Ads mobile SDK
+  kind: native-sdk
+  platforms:
+  - iOS / macOS (SwiftUI, Swift 5.9+, iOS 15+)
+  - Android (Jetpack Compose, Kotlin 1.9+, API 24+)
+  repo: https://github.com/prorata-ai/PrtAdsSDK
+  description: >-
+    Native UI components that render contextual ads against a search query. Packaging
+    detail is recorded in packages/prorataai-packages.yml.
+- name: Gist Console
+  kind: hosted-dashboard
+  url: https://console.gist.ai/
+  description: >-
+    The publisher-facing hosted console — ingestion summary, publications management
+    and the partner/publication/article analytics dashboards. Sign-in gated.
+  docs:
+  - https://platform.gist.ai/docs/ingestion-summary
+  - https://platform.gist.ai/docs/publications-management
+  - https://platform.gist.ai/docs/analytics-pages-overview

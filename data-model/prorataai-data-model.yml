@@ -1,0 +1,126 @@
+generated: '2026-08-26'
+method: derived
+source: openapi/prorataai-openapi.json
+note: >-
+  DERIVED FROM INLINE SCHEMAS ONLY. components.schemas is empty in the published contract,
+  so there are no $ref links to walk; this graph is reconstructed from the identifier
+  fields that recur across request bodies, path parameters and response bodies.
+entities:
+- name: Thread
+  identifier: thread_id
+  id_format: uuid
+  description: A chat conversation. Created implicitly by POST /v1/chat when thread_id is empty.
+  operations:
+  - POST /v1/chat
+  - GET /v1/threads
+  - GET /v1/threads/{threadId}
+  - DELETE /v1/threads/{threadId}
+  fields:
+  - thread_id
+  - thread_title
+- name: Turn
+  identifier: turn_id
+  id_format: number
+  description: One question/answer exchange inside a thread. Not addressable on its own — always reached as {threadId}/{turnId}.
+  operations:
+  - POST /v1/chat
+  - GET /v1/chat/response/{threadId}/{turnId}
+  fields:
+  - turn_id
+- name: Citation
+  identifier: null
+  description: The sources cited in a chat turn's answer.
+  operations:
+  - GET /v1/chat/citations/{threadId}/{turnId}
+- name: Attribution
+  identifier: null
+  description: >-
+    The credit split for a chat turn, expressed four ways — by source URL, by domain, by
+    document (SHA-256 hash) and by publisher UUID — each a map of identifier to percentage.
+  operations:
+  - GET /v1/chat/attributions/{threadId}/{turnId}
+  fields:
+  - credit_dist
+  - domain_credit_dist
+  - document_credit_dist
+  - publisher_credit_dist
+- name: Summary
+  identifier: summaryId
+  description: >-
+    A summarization request for a URL. Created by POST /v1/summaries and then streamed
+    from GET /v1/summaries/{summaryId}. The target URL's domain must exactly match an
+    authorized publisher domain on the caller's publisher group.
+  operations:
+  - POST /v1/summaries
+  - GET /v1/summaries/{summaryId}
+  fields:
+  - url
+  - length
+  - medium
+  - style
+- name: Publisher
+  identifier: id
+  description: An individual publication within a publisher group.
+  operations:
+  - GET /v1/publishers
+  - GET /v1/publishers/{id}
+- name: PublisherGroup
+  identifier: publisher group ID
+  description: >-
+    The umbrella an organization's publications sit under, and the level at which the API
+    key is issued. Returned by GET /v1/publishers as id, name, description and a list of
+    publisher IDs.
+  operations:
+  - GET /v1/publishers
+- name: Question
+  identifier: null
+  description: Recommended and query-related question suggestions.
+  operations:
+  - GET /v1/questions/recommended
+  - POST /v1/questions/related
+- name: Article
+  identifier: publication_external_id + external_url
+  description: >-
+    A publisher-pushed article in the Gist Content Network. Documented in the Gist Content
+    API only; it has no OpenAPI contract.
+  operations:
+  - POST /ingest/article
+  - POST /ingest/multiple_articles
+  source: https://platform.gist.ai/docs/gist-content-api
+relationships:
+- from: Thread
+  to: Turn
+  type: has_many
+  via: turn_id within {threadId}/{turnId}
+- from: Turn
+  to: Citation
+  type: has_one
+  via: '{threadId}/{turnId}'
+- from: Turn
+  to: Attribution
+  type: has_one
+  via: '{threadId}/{turnId}'
+- from: PublisherGroup
+  to: Publisher
+  type: has_many
+  via: list of publisher IDs on the publisher group
+- from: Publisher
+  to: Article
+  type: has_many
+  via: publication_external_id / publication_domain
+- from: Attribution
+  to: Publisher
+  type: references
+  via: publisher_credit_dist keyed on publisher UUID
+- from: Summary
+  to: Publisher
+  type: belongs_to
+  via: exact-match validation of the summarized URL's domain against publisher domains
+id_formats:
+- entity: Thread
+  format: uuid
+  example_source: 'spec example thread_id 123e4567-e89b-12d3-a456-426614174000'
+- entity: Attribution.document_credit_dist keys
+  format: sha-256 hash
+- entity: Attribution.publisher_credit_dist keys
+  format: uuid

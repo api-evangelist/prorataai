@@ -1,0 +1,98 @@
+generated: '2026-08-26'
+method: derived
+source: openapi/prorataai-openapi.json + https://platform.gist.ai/docs/gist-content-api
+format: vendor-json
+format_note: >-
+  NOT RFC 9457. No operation declares application/problem+json. Two different JSON error
+  envelopes are published in the same contract and a third is returned live, so an agent
+  cannot parse errors with one shape.
+envelopes:
+- name: statusCode envelope
+  shape: '{ "error": string, "message": string, "statusCode": integer }'
+  observed: live
+  evidence: 'GET https://api.gist.ai/v1/ -> 401 {"error":"Unauthorized","message":"Missing or invalid Authorization header","statusCode":401}'
+  declared_on:
+  - 429 on POST /v1/chat, POST /v1/chat/completions, POST /v1/questions/related
+- name: error/status envelope
+  shape: '{ "error": string, "status": integer }'
+  observed: declared
+  declared_on:
+  - 400 on POST /v1/summaries
+- name: error-only envelope
+  shape: '{ "error": string }'
+  observed: declared
+  declared_on:
+  - 403 on POST /v1/summaries
+- name: undeclared
+  shape: null
+  observed: declared
+  note: >-
+    Most 4xx/5xx responses in the spec carry a description string and NO content schema
+    at all — 400 (6 of 8), every 401 (14), 404 (all 8) and every 500 (15).
+problem_types:
+- status: 400
+  title: Bad request
+  detail_variants:
+  - Invalid request parameters
+  - Bad request - Missing user_prompt
+  - Bad request - Missing required fields
+  - Bad request - Missing publisher ID
+  - Invalid thread ID or turn ID format
+  - Invalid summaryId
+  operations: 8
+  remediation: >-
+    Supply the required body fields (user_prompt on POST /v1/chat) and well-formed
+    threadId/turnId/summaryId path parameters.
+- status: 401
+  title: Unauthorized
+  detail_variants:
+  - Unauthorized - Invalid or missing API key
+  - Unauthorized - Invalid or missing authentication
+  - 'Missing or invalid Authorization header (observed live)'
+  operations: 14
+  remediation: >-
+    Send Authorization: Bearer <api-key>. Keys are issued at the Publisher Group level
+    during onboarding.
+- status: 403
+  title: Forbidden
+  detail_variants:
+  - Forbidden - Publisher not in organization's publisher group
+  - Forbidden - URL domain not authorized for this organization
+  operations: 2
+  remediation: >-
+    POST /v1/summaries validates the target URL's domain against the publisher domains
+    on your publisher group; the match is exact and subdomains are NOT automatically
+    allowed. Request the domain be added to your group.
+- status: 404
+  title: Not found
+  detail_variants:
+  - Thread not found
+  - Thread or turn not found
+  - Thread, turn, or citations not found
+  - Thread, turn, or attributions not found
+  - Publisher not found
+  - Summary not found
+  - URL content not found
+  operations: 8
+  remediation: Re-read the identifier from the creating call's response body.
+- status: 429
+  title: Too Many Requests
+  detail_variants:
+  - Too Many Requests - Your request was rejected due to rate limit restrictions
+  - Too Many Requests - Request rejected due to rate limiting
+  operations: 12
+  remediation: >-
+    Back off until X-RateLimit-Reset (a unix timestamp). Limits are set per organization;
+    the documented Gist Content API ingest default is 10 requests per minute.
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+- status: 500
+  title: Internal server error
+  detail_variants:
+  - Internal server error
+  operations: 15
+  remediation: Retry with backoff; contact support@gist.ai if persistent.
+docs:
+- https://platform.gist.ai/docs/gist-content-api

@@ -1,0 +1,86 @@
+generated: '2026-08-26'
+method: probed
+source: live GET probes of /.well-known/* on every ProRata.ai / Gist host
+note: >-
+  Every /.well-known/ path was probed on all four hosts (the corporate site, the
+  Gist product site, the API host and the developer hub) and every one returned a
+  non-2xx. api.gist.ai answers /.well-known/* with a 502 from its Microsoft Azure
+  Application Gateway, which is a routing miss rather than a served document.
+  Nothing was saved, so NO WellKnown or SecurityTxt pointer is emitted in apis.yml —
+  this file records a measured absence, not a surface.
+hit_count: 0
+hosts:
+- host: https://prorata.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://gist.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://api.gist.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 502
+  - path: /.well-known/openid-configuration
+    status: 502
+  - path: /.well-known/oauth-authorization-server
+    status: 502
+  - path: /.well-known/oauth-protected-resource
+    status: 502
+  - path: /.well-known/api-catalog
+    status: 502
+  - path: /.well-known/ai-plugin.json
+    status: 502
+  - path: /.well-known/agent-card.json
+    status: 502
+  - path: /.well-known/agent.json
+    status: 502
+- host: https://platform.gist.ai
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/oauth-protected-resource/mcp
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404

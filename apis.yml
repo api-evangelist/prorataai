@@ -1,23 +1,148 @@
 aid: prorataai
-name: Prorataai
-description: 'Prorataai is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+name: ProRata.ai
+description: 'ProRata.ai is an AI attribution, search and advertising company founded
+  in 2024 by Idealab founder Bill Gross. It operates the Gist family of products —
+  Gist Answers (an embeddable, publisher-hosted AI answer widget), Gist Content Network
+  (a licensed publisher content corpus with revenue share), Gist Ads (advertising placed
+  inside AI answer surfaces) and Gist GEO (generative-engine-optimization visibility
+  tracking). Its developer surface is the Gist Developer Hub at platform.gist.ai, which
+  publishes a public OpenAPI 3.0 contract — the "Prorata API Service" — covering chat,
+  streaming completions, citations and attributions, threads, recommended and related
+  questions, document summarization, publisher lookup and service health, served from
+  https://api.gist.ai behind a Bearer API key issued at the Publisher Group level.'
+image: https://prorata.ai/wp-content/uploads/2026/01/prorata-OGshare-OS-1.webp
 url: https://raw.githubusercontent.com/api-evangelist/prorataai/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
-- Company
-apis: []
+- Artificial Intelligence
+- Search
+- Content
+- Publishing
+- Advertising
+- Attribution
+- Answer Engines
+- Generative AI
+- Media
+- Content Licensing
+apis:
+- aid: prorataai-prorata-api-service
+  name: Prorata API Service
+  description: 'The public Gist Answers API. Chat creation and streaming completions,
+    citations and attributions for a chat turn, thread listing/retrieval/deletion,
+    recommended and related questions, URL-scoped document summarization with streaming
+    delivery, publisher-group lookup and a public service health endpoint. Authenticated
+    with an API key sent as an Authorization Bearer header, issued at the Publisher
+    Group level; rate limits are per-organization and signalled with X-RateLimit-*
+    response headers.'
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Chat
+  - Questions
+  - Summaries
+  - Threads
+  - Publishers
+  - Health
+  x-spec-provenance: >-
+    Saved verbatim from https://dash.readme.com/api/v1/api-registry/c0mok9ckmb84e34y — the
+    ReadMe API registry document that ProRata's own developer hub loads to render its API
+    reference. The registry uuid c0mok9ckmb84e34y and filename openapi.public.yaml were
+    read out of the hub's own page state at platform.gist.ai (readme-subdomain "prorata").
+    Ownership check: info.title is "Prorata API Service", the contract's endpoints match
+    the Gist Answers features ProRata documents and sells, and the base it describes,
+    https://api.gist.ai, answers live — gist.ai is ProRata's own product domain, stated as
+    such on prorata.ai and throughout platform.gist.ai. Nothing in the document points at
+    a third party.
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-openapi.json
+  - type: Overlay
+    url: overlays/prorataai-openapi-overlay.yaml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai-gist-content-api
+  name: Gist Content API (Ingest)
+  description: 'The publisher ingest API for the Gist Content Network. Publisher partners
+    push articles to ProRata in real time (POST /ingest/article) or in bulk for archived
+    content (POST /ingest/multiple_articles), authenticated with a Publisher Group
+    Bearer API key. The published documentation states a default rate limit of 10 requests
+    per minute and documents 400/401/429/500 error semantics. ProRata does not publish
+    an OpenAPI contract for this surface; the docs give relative endpoint paths only.'
+  humanURL: https://platform.gist.ai/docs/gist-content-api
+  baseURL: https://api.gist.ai
+  tags:
+  - Ingest
+  - Content
+  - Publishing
+  properties:
+  - type: Documentation
+    url: https://platform.gist.ai/docs/gist-content-api
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/prorataai-domain-security.yml
 - type: Website
-  url: https://www.hiive.com/securities/prorataai-stock
+  url: https://prorata.ai/
+- type: DeveloperPortal
+  url: https://platform.gist.ai/docs/about-gist-services
+- type: Documentation
+  url: https://platform.gist.ai/docs/about-gist-services
+- type: GettingStarted
+  url: https://platform.gist.ai/docs/quick-start-using-widgets
+- type: Support
+  url: https://gist.ai/contact
+- type: Blog
+  url: https://gist.ai/get-the-gist
+- type: GitHubOrganization
+  url: https://github.com/prorata-ai
+- type: SignUp
+  url: https://console.gist.ai/auth/signin
+- type: TermsOfService
+  url: https://gist.ai/terms-of-use
+- type: PrivacyPolicy
+  url: https://gist.ai/privacy-policy
+- type: LLMsTxt
+  url: llms/prorataai-llms.txt
+- type: Packages
+  url: packages/prorataai-packages.yml
+- type: SDKs
+  url: packages/prorataai-packages.yml
+- type: Components
+  url: components/prorataai-components.yml
+- type: MCPServer
+  url: mcp/prorataai-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/prorataai-tool-crosswalk.yml
+- type: Authentication
+  url: authentication/prorataai-authentication.yml
+- type: Conventions
+  url: conventions/prorataai-conventions.yml
+- type: ErrorCatalog
+  url: errors/prorataai-problem-types.yml
+- type: RateLimits
+  url: rate-limits/prorataai-rate-limits.yml
+- type: Plans
+  url: plans/prorataai-plans-pricing.yml
+- type: Lifecycle
+  url: lifecycle/prorataai-lifecycle.yml
+- type: Conformance
+  url: conformance/prorataai-conformance.yml
+- type: DataModel
+  url: data-model/prorataai-data-model.yml
+- type: Sandbox
+  url: sandbox/prorataai-sandbox.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v1

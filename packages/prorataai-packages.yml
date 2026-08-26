@@ -1,0 +1,65 @@
+generated: '2026-08-26'
+method: searched
+source: https://github.com/prorata-ai + https://platform.gist.ai/docs/quick-start-using-widgets
+note: >-
+  ProRata publishes no client library on npm, PyPI, RubyGems, crates.io, Packagist,
+  NuGet or pkg.go.dev. The npm names "gist-ai" and "prorata" both exist but belong to
+  unrelated third parties (an AI context-compression library and a share-distribution
+  utility) and are NOT recorded here. The two first-party distributions are a mobile
+  ads SDK published straight from the GitHub repository (Swift Package Manager +
+  JitPack, no Maven Central coordinate as of this probe) and an unpinned CDN build of
+  the Gist Answers chat widget.
+packages:
+- language: swift
+  registry: swift-package-manager
+  name: PrtAdsSDK
+  url: https://github.com/prorata-ai/PrtAdsSDK
+  install: '.package(url: "https://github.com/Prorata-ai/PrtAdsSDK.git", from: "1.0.2")'
+  official: true
+  version: null
+  published: null
+  note: >-
+    The repository README instructs consumers to resolve from 1.0.2, but the only git
+    tag published on the repository is 1.0.1 (commit dated 2026-01-05) and there are
+    zero GitHub Releases, so Swift Package Manager cannot resolve the version the
+    documentation names. version recorded as null because no published artifact carries
+    it. Repo last pushed 2026-07-22; no LICENSE file is set on the repository.
+- language: kotlin
+  registry: jitpack
+  name: com.github.Prorata-ai:PrtAdsSDK
+  url: https://jitpack.io/#Prorata-ai/PrtAdsSDK
+  install: implementation("com.github.Prorata-ai:PrtAdsSDK:1.0.1")
+  official: true
+  version: '1.0.1'
+  published: '2026-01-05'
+  note: >-
+    Version and date read from the git tag 1.0.1 (JitPack builds from tags). The JitPack
+    build API (https://jitpack.io/api/builds/com.github.Prorata-ai/PrtAdsSDK) reports
+    build status "Error" for 1.0.1, so the Gradle coordinate the documentation publishes
+    does not currently resolve to a built artifact. The README says Maven Central is
+    "coming soon"; a Maven Central search for prorata returned nothing.
+- language: javascript
+  registry: cdn
+  name: chatWidget.js (Gist Answers chat widget)
+  url: https://cdn.gist.ai/chatWidget.js
+  install: '<script type="module" src="https://cdn.gist.ai/chatWidget.js"></script>'
+  official: true
+  version: null
+  published: null
+  note: >-
+    Distributed as an unpinned CDN module loader, not through a package registry. The
+    documented script tag carries no version in the URL and there is no jsDelivr/unpkg
+    package to query, so a consumer cannot tell which build they are loading — that is
+    the finding, not a gap in the probe. A separate sandbox origin
+    (https://cdn.sandbox.gist.ai/chatWidget.js) serves the test build.
+registries_checked:
+- npm
+- pypi
+- rubygems
+- crates.io
+- packagist
+- nuget
+- pkg.go.dev
+- maven-central
+- jitpack
+- swift-package-manager

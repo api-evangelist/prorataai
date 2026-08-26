@@ -1,0 +1,73 @@
+generated: '2026-08-26'
+method: derived
+source: openapi/prorataai-openapi.json + mcp/prorataai-mcp.yml
+note: >-
+  ProRata has both an OpenAPI contract and a remote MCP endpoint, so the crosswalk is
+  emitted — but the MCP tool list is authorization-gated (HTTP 401, -32001), so NO tool
+  rows are asserted. Every published REST operation is therefore recorded as rest_only.
+  This is an honest empty crosswalk, not an incomplete one; it should be re-derived once
+  the MCP server can be introspected.
+surfaces:
+  openapi: openapi/prorataai-openapi.json
+  openapi_base: https://api.gist.ai
+  graphql: null
+  mcp: https://platform.gist.ai/mcp
+  mcp_gated: true
+  mcp_gate_reason: 'JSON-RPC tools/list returns 401 {"code":-32001,"message":"Authorization required"}'
+crosswalk: []
+mcp_only: []
+rest_only:
+- operation: GET /v1/health
+  summary: Get detailed service health status
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /
+  summary: Get service information
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: POST /v1/chat
+  summary: Create a new chat
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: POST /v1/chat/completions
+  summary: Stream AI completions (Experimental)
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/chat/response/{threadId}/{turnId}
+  summary: Stream chat response
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/chat/citations/{threadId}/{turnId}
+  summary: Get citations for a chat response
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/chat/attributions/{threadId}/{turnId}
+  summary: Get attributions for a chat response
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/threads
+  summary: List all chat threads (Advanced)
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/threads/{threadId}
+  summary: Get a specific thread (Advanced)
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: DELETE /v1/threads/{threadId}
+  summary: Delete a thread (Advanced)
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/questions/recommended
+  summary: Get recommended questions
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: POST /v1/questions/related
+  summary: Get related questions
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: POST /v1/summaries
+  summary: Create document summarization
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/summaries/{summaryId}
+  summary: Stream a document summary
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/publishers
+  summary: Get publisher information
+  reason: MCP tool list not readable; no tool binding can be asserted.
+- operation: GET /v1/publishers/{id}
+  summary: Get specific publisher details
+  reason: MCP tool list not readable; no tool binding can be asserted.
+coverage:
+  mcp_tools: null
+  rest_operations: 16
+  bound: 0
+  mcp_only: 0
+  rest_only: 16

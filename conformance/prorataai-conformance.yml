@@ -1,0 +1,118 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  openapi/prorataai-openapi.json + https://github.com/prorata-ai/content-telemetry-attribution
+  + https://platform.gist.ai/docs/prorata-ai-crawler-bot + live probes
+standards:
+- id: openapi
+  conforms: true
+  version: 3.0.0
+  evidence: >-
+    A public OpenAPI 3.0.0 document, "Prorata API Service", 16 operations across 6 tags,
+    served from the ProRata developer hub's API registry and rendered as the hub's API
+    reference.
+  source: https://dash.readme.com/api/v1/api-registry/c0mok9ckmb84e34y
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No oauth2 securityScheme. The only scheme is apiKey in the Authorization header with
+    a Bearer prefix — bearer-shaped, but a static key, not an OAuth token.
+- id: oidc
+  conforms: false
+  evidence: 'No /.well-known/openid-configuration on any host (all 404/502).'
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    No application/problem+json media type anywhere in the contract; three different
+    vendor error envelopes are published instead. See errors/prorataai-problem-types.yml.
+- id: rfc9116
+  conforms: false
+  evidence: 'No /.well-known/security.txt on prorata.ai, gist.ai, api.gist.ai or platform.gist.ai.'
+- id: rfc8594
+  conforms: false
+  evidence: 'No Sunset or Deprecation headers declared or observed.'
+- id: pagination
+  conforms: partial
+  evidence: >-
+    One collection endpoint (GET /v1/threads) with startAt/maxResults query parameters
+    and no declared total or cursor in the response.
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No Idempotency-Key parameter on any of the four POST operations and no retry-safety
+    guidance in the hub.
+- id: json-schema
+  conforms: partial
+  evidence: >-
+    Request and response schemas are declared inline on every operation, but
+    components.schemas is EMPTY — the contract defines zero reusable schemas, so nothing
+    is shared between the 16 operations. components carries only securitySchemes and
+    three rate-limit headers.
+- id: server-sent-events
+  conforms: true
+  evidence: >-
+    Three operations stream (POST /v1/chat/completions, GET /v1/chat/response/{threadId}/
+    {turnId}, GET /v1/summaries/{summaryId}); the docs direct browser clients to consume
+    them with EventSource.
+- id: llms-txt
+  conforms: partial
+  evidence: >-
+    https://platform.gist.ai/llms.txt is served (HTTP 200, 9.7KB) and indexes 20 guides
+    and 13 API reference pages with real descriptions — a genuine, well-formed llms.txt.
+    But every /reference/* URL it advertises returns HTTP 404 to a server-side fetch
+    (verified from two separate egress points on get_v1-health, and on /reference/health,
+    /reference/chat and /reference/publishers). The hub's whole API reference section is
+    client-rendered behind a 404 status, so an agent or crawler following ProRata's own
+    llms.txt reaches nothing. NO APIReference pointer is wired into apis.yml as a result;
+    the machine-readable contract is reachable, at the hub's ReadMe API registry.
+  source: https://platform.gist.ai/llms.txt
+- id: robots-txt
+  conforms: true
+  evidence: >-
+    Both prorata.ai and gist.ai serve robots.txt, and the crawler documentation states
+    the Gist crawler respects robots.txt and identifies itself with the user-agent
+    ProRataInc from two published IP addresses.
+  source: https://platform.gist.ai/docs/prorata-ai-crawler-bot
+domain_standards:
+- id: content-telemetry
+  name: Content Telemetry (SPUR Coalition)
+  role: contributor
+  conforms: false
+  contract_declares: false
+  evidence: >-
+    ProRata publicly authored and published, under Apache-2.0 on its own GitHub org, a
+    proposed extension to the SPUR Coalition Content Telemetry standard — "Fractional
+    attribution extension", status "proposal draft (v2026-07-13) ... contributed by
+    ProRata for public comment. Not adopted by the SPUR Coalition." It ships an object
+    model, RFC-style conformance rules, a conduct/disclosure profile and three JSON
+    Schemas (draft 2020-12): attribution-extension.json, attribution-report.json,
+    attribution-session-strict.json, with the core session schema vendored verbatim.
+  contract_gap: >-
+    RECORDED AS NON-CONFORMING ON PURPOSE. The shipped API does NOT emit the format.
+    GET /v1/chat/attributions/{threadId}/{turnId} returns a vendor-specific shape —
+    credit_dist / domain_credit_dist / document_credit_dist / publisher_credit_dist, each
+    a bare map of identifier to percentage — with no extension identifier, no estimator
+    id/version, no model_residual and no granularity. The extension's own example uses
+    the estimator id "ai.prorata.gist-fa", so the two are plainly related, but the public
+    contract carries none of the standard's carrier fields. A buyer who already speaks
+    Content Telemetry still needs a bespoke connector for this API.
+  source: https://github.com/prorata-ai/content-telemetry-attribution
+- id: content-signals
+  name: Content Signals (robots.txt Content-Signal directive)
+  conforms: partial
+  evidence: >-
+    prorata.ai's robots.txt carries a full Content Signals preamble and
+    "Content-Signal: search=yes,ai-train=no,use=reference" plus per-bot Disallow blocks
+    for Amazonbot, Applebot-Extended and Bytespider. The block is explicitly labelled
+    "BEGIN Cloudflare Managed content", so it is an edge-provider default rather than a
+    hand-authored ProRata declaration, and is recorded as such. gist.ai's robots.txt
+    carries only a Sitemap line and no content signals at all.
+  source: https://prorata.ai/robots.txt
+compliance:
+  certifications_published: false
+  trust_center: false
+  note: >-
+    No SOC 2 / ISO 27001 / PCI / HIPAA / FedRAMP claim, no trust center and no compliance
+    page were found on prorata.ai, gist.ai or the developer hub. probe-security-programs.py
+    returned vdp=none trust=none. NO Compliance or TrustCenter pointer is wired into
+    apis.yml.

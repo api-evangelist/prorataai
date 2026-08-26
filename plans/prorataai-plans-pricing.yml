@@ -1,0 +1,24 @@
+generated: '2026-08-26'
+method: searched
+source: https://gist.ai/products/gist-answers
+plan_count: 0
+pricing_model: contact-sales
+note: >-
+  ProRata publishes no pricing page and no plan tiers. Every product page (Gist Answers,
+  Gist Ads, Gist GEO) ends in "Contact Us" or "BOOK A DEMO", there is no /pricing route on
+  either prorata.ai or gist.ai, and the developer hub says API keys "are provided during
+  onboarding. Contact us if you need access." The one published commercial term is a
+  revenue share, not a price: the Gist Content Network offers publishers "50% revenue
+  share on all monetized traffic". This is an honest zero, not a gap in the probe.
+plans: []
+commercial_terms:
+- name: Gist Content Network revenue share
+  value: 50% revenue share on all monetized traffic
+  source: https://platform.gist.ai/docs/about-gist-services
+x-evidence:
+- url: https://prorata.ai/pricing/
+  status: 404
+- url: https://gist.ai/products/gist-answers
+  status: 200
+- url: https://gist.ai/contact
+  status: 200

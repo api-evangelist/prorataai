@@ -1,0 +1,94 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://platform.gist.ai/docs/about-gist-services + openapi/prorataai-openapi.json +
+  live probes
+versioning:
+  scheme: uri-path
+  current: v1
+  spec_version: 1.0.0
+  hub_version: '1.0'
+  policy_published: false
+  policy_note: >-
+    No versioning policy page exists in the Gist Developer Hub. The only version signals
+    are the /v1 path prefix, info.version 1.0.0 in the OpenAPI, and the ReadMe hub's
+    declared version 1.0.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    No operation in the published contract carries deprecated: true, and no Sunset or
+    Deprecation response header is declared or observed. There is no deprecation policy
+    page. NO Deprecation pointer is wired into apis.yml.
+maturity_labels:
+- label: Experimental
+  operations:
+  - POST /v1/chat/completions
+  evidence: 'The operation summary is "Stream AI completions (Experimental)".'
+- label: Advanced
+  operations:
+  - GET /v1/threads
+  - GET /v1/threads/{threadId}
+  - DELETE /v1/threads/{threadId}
+  evidence: 'Each thread operation summary is suffixed "(Advanced)".'
+status_page:
+  published: false
+  url: null
+  note: >-
+    No hosted status page. status.gist.ai and status.prorata.ai both fail to resolve in
+    DNS. NO StatusPage pointer is wired into apis.yml.
+  health_endpoint:
+    url: https://api.gist.ai/v1/health
+    public: true
+    auth_required: false
+    note: >-
+      The API does ship a public, unauthenticated health endpoint that reports per-service
+      status (database, redis, inference, publishers, questions, document) plus uptime.
+      It is a machine surface, not a status page, and it does not carry incident history.
+    observed:
+      fetched: '2026-08-26'
+      http_status: 503
+      body_status: unhealthy
+      note: >-
+        Observed live during this pass. The top-level status was "unhealthy" and the
+        endpoint answered HTTP 503 while every named dependency reported "operational" —
+        recorded as measured, not interpreted.
+sla:
+  published: false
+changelog:
+  published: false
+  note: >-
+    https://platform.gist.ai/changelog returns 404 and the hub's own navigation renders
+    "No Changelogs". Documentation pages carry an updatedAt timestamp in their markdown
+    front matter (the most recent seen in this pass is 2025-10-10), which is the only
+    dated change signal published. No ChangeLog artifact or pointer is emitted.
+support:
+  email: support@gist.ai
+  contact: https://gist.ai/contact
+  note: 'API keys are issued during onboarding; the docs direct integrators to contact ProRata.'
+api_reference:
+  published: true
+  crawlable: false
+  note: >-
+    The Gist Developer Hub publishes an API reference (13 pages, listed in its own
+    llms.txt), but every /reference/* URL answers HTTP 404 server-side while the ReadMe
+    SuperHub renders it client-side. /reference itself 301s to /reference/health, which
+    then 404s. Confirmed from two independent egress points on 2026-08-26. No
+    APIReference pointer is wired, because the URL a scorer or agent would fetch is dead.
+  machine_readable_contract: https://dash.readme.com/api/v1/api-registry/c0mok9ckmb84e34y
+x-evidence:
+- url: https://platform.gist.ai/reference/get_v1-health
+  status: 404
+- url: https://platform.gist.ai/reference/health
+  status: 404
+- url: https://platform.gist.ai/changelog
+  status: 404
+- url: https://status.gist.ai/
+  status: '<no response> (DNS: could not resolve host)'
+- url: https://status.prorata.ai/
+  status: '<no response> (DNS: could not resolve host)'
+- url: https://api.gist.ai/v1/health
+  status: 503

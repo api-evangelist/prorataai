@@ -1,0 +1,103 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Prorata API Service
+  version: 1.0.0
+extends: ../openapi/prorataai-openapi.json
+x-generated: '2026-08-26'
+x-method: generated
+x-source: openapi/prorataai-openapi.json
+x-note: >-
+  Non-destructive enhancements only. The original contract is never mutated. Every action
+  below closes a gap measured against the published document during the 2026-08-26
+  enrichment pass: the spec declares no operationIds, no top-level tag descriptions, no
+  global security requirement, and a relative servers[] entry ("/v1") that does not name
+  a host even though https://api.gist.ai/v1/health answers live.
+actions:
+- target: $.servers
+  description: >-
+    Add the absolute production host. The published servers[] value is the relative
+    string "/v1" while every path already begins with /v1, so naive concatenation yields
+    /v1/v1/... The host below was confirmed live (GET https://api.gist.ai/v1/health
+    returned a real health document; https://api.gist.ai/v1/publishers returned a
+    well-formed 401).
+  update:
+  - url: https://api.gist.ai
+    description: Production (confirmed live 2026-08-26)
+- target: $.security
+  description: >-
+    Declare the API-key scheme globally. 14 of 16 operations already require it
+    per-operation; only GET / and GET /v1/health are public.
+  update:
+  - apiKeyAuth: []
+- target: $.tags
+  description: >-
+    The contract declares tags:[] at the root while every operation carries a tag, so the
+    six tag groups are undescribed.
+  update:
+  - name: Chat
+    description: Create chats, stream completions, and read the citations and attribution credit split for a turn.
+  - name: Threads
+    description: List, read and permanently delete chat threads. Marked "(Advanced)" in the published contract.
+  - name: Questions
+    description: Recommended and query-related question suggestions.
+  - name: Summaries
+    description: URL-scoped document summarization, delivered as a stream. Restricted to authorized publisher domains.
+  - name: Publishers
+    description: Publisher-group and publisher lookup. Redis-cached with a 1-hour TTL.
+  - name: Health
+    description: Public, unauthenticated service and dependency health.
+- target: $.paths['/v1/chat'].post
+  description: Add a stable operationId. The published contract declares none on any operation.
+  update:
+    operationId: createChat
+- target: $.paths['/v1/chat/completions'].post
+  update:
+    operationId: streamChatCompletions
+- target: $.paths['/v1/chat/response/{threadId}/{turnId}'].get
+  update:
+    operationId: streamChatResponse
+- target: $.paths['/v1/chat/citations/{threadId}/{turnId}'].get
+  update:
+    operationId: getChatCitations
+- target: $.paths['/v1/chat/attributions/{threadId}/{turnId}'].get
+  update:
+    operationId: getChatAttributions
+- target: $.paths['/v1/threads'].get
+  update:
+    operationId: listThreads
+- target: $.paths['/v1/threads/{threadId}'].get
+  update:
+    operationId: getThread
+- target: $.paths['/v1/threads/{threadId}'].delete
+  description: >-
+    Add an operationId and flag the operation as irreversible. The published description
+    states it "Permanently deletes a chat thread and all its associated turns"; no restore
+    path exists. See conventions/prorataai-conventions.yml reversibility.
+  update:
+    operationId: deleteThread
+    x-reversible: false
+    x-consequence: destructive
+- target: $.paths['/v1/questions/recommended'].get
+  update:
+    operationId: getRecommendedQuestions
+- target: $.paths['/v1/questions/related'].post
+  update:
+    operationId: getRelatedQuestions
+- target: $.paths['/v1/summaries'].post
+  update:
+    operationId: createSummary
+- target: $.paths['/v1/summaries/{summaryId}'].get
+  update:
+    operationId: streamSummary
+- target: $.paths['/v1/publishers'].get
+  update:
+    operationId: getPublisherGroup
+- target: $.paths['/v1/publishers/{id}'].get
+  update:
+    operationId: getPublisher
+- target: $.paths['/v1/health'].get
+  update:
+    operationId: getHealth
+- target: $.paths['/'].get
+  update:
+    operationId: getServiceInfo

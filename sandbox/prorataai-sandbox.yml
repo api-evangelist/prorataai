@@ -1,0 +1,45 @@
+generated: '2026-08-26'
+method: searched
+source: https://platform.gist.ai/docs/quick-start-using-widgets
+summary: >-
+  ProRata publishes a named sandbox environment for the Gist Answers widget: the install
+  guide tells integrators to point the widget loader at the sandbox origin while testing
+  and swap it for the production origin when going live.
+environments:
+- name: sandbox
+  purpose: testing
+  widget_loader: https://cdn.sandbox.gist.ai/chatWidget.js
+  origin: https://cdn.sandbox.gist.ai
+  source: https://platform.gist.ai/docs/quick-start-using-widgets
+- name: production
+  purpose: live
+  widget_loader: https://cdn.gist.ai/chatWidget.js
+  origin: https://cdn.gist.ai
+  source: https://platform.gist.ai/docs/quick-start-using-widgets
+credentials:
+  test_keys_published: false
+  key_prefixes_published: false
+  note: >-
+    No test API key, key prefix convention, or self-serve key issuance is published. The
+    same Publisher Group key is used against whichever environment the widget points at,
+    and keys are only obtainable through onboarding ("API keys are provided during
+    onboarding. Contact us if you need access."), so an integrator cannot exercise the
+    sandbox without a sales conversation.
+test_fixtures: []
+test_clocks: false
+console:
+  url: https://console.gist.ai/
+  note: >-
+    The developer hub also embeds a <WidgetCodeGenerator /> component behind a "Have an
+    API Key?" accordion on the install page, which generates the widget snippet for a
+    supplied key.
+x-evidence:
+- url: https://cdn.gist.ai/chatWidget.js
+  status: 200
+  note: 'Served — a module bootloader that injects the custom element in place.'
+- url: https://api.sandbox.gist.ai/v1/health
+  status: '<no response> (TLS: certificate subject name does not match api.sandbox.gist.ai)'
+  note: >-
+    Probed once to see whether the sandbox extends to the API host as well as the CDN.
+    It does not resolve to a valid certificate, and no sandbox API base is documented —
+    only the widget CDN origin is.

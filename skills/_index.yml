@@ -1,0 +1,33 @@
+generated: '2026-08-26'
+method: generated
+source: openapi/prorataai-openapi.json + https://platform.gist.ai/docs/gist-content-api
+note: >-
+  ProRata publishes no skills/ or AGENTS.md of its own — searched and not found. These are
+  API Evangelist-generated operating instructions grounded in the published contract and
+  documentation. The contract declares no operationIds, so every step is addressed by
+  method + path.
+skills:
+- name: prorataai-ask-and-attribute
+  file: prorataai-ask-and-attribute.md
+  api: Prorata API Service
+  description: Ask Gist Answers, stream the answer, then read citations and the attribution credit split.
+  operations:
+  - POST /v1/chat
+  - GET /v1/chat/response/{threadId}/{turnId}
+  - GET /v1/chat/citations/{threadId}/{turnId}
+  - GET /v1/chat/attributions/{threadId}/{turnId}
+- name: prorataai-summarize-publisher-url
+  file: prorataai-summarize-publisher-url.md
+  api: Prorata API Service
+  description: Create and stream a summary of an authorized publisher URL.
+  operations:
+  - GET /v1/publishers
+  - POST /v1/summaries
+  - GET /v1/summaries/{summaryId}
+- name: prorataai-ingest-publisher-content
+  file: prorataai-ingest-publisher-content.md
+  api: Gist Content API (Ingest)
+  description: Push single and bulk articles into the Gist Content Network.
+  operations:
+  - POST /ingest/article
+  - POST /ingest/multiple_articles

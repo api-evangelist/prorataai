@@ -1,0 +1,54 @@
+generated: '2026-08-26'
+method: probed
+source: https://platform.gist.ai/mcp
+name: Gist Developer Hub MCP
+description: >-
+  ProRata serves a remote MCP endpoint on its own developer-hub host, platform.gist.ai.
+  A GET returns the plain-text guard "This URL can only be accessed with a MCP client."
+  and a JSON-RPC POST is answered by a real MCP server, so the surface exists and is
+  reachable — but it is authorization-gated, so its live tool list could not be read.
+deployment:
+  mode: remote
+  endpoint: https://platform.gist.ai/mcp
+  install: null
+  package: null
+  auth: oauth
+  verified: probed
+status: published
+x-evidence:
+  fetched: '2026-08-26'
+  probes:
+  - url: https://platform.gist.ai/mcp
+    method: GET
+    http_status: 200
+    body: 'This URL can only be accessed with a MCP client.'
+  - url: https://platform.gist.ai/mcp
+    method: POST
+    payload: '{"jsonrpc":"2.0","id":1,"method":"initialize",...}'
+    http_status: 401
+    body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+  - url: https://platform.gist.ai/mcp
+    method: POST
+    payload: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+    http_status: 401
+    body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+  - url: https://platform.gist.ai/.well-known/oauth-protected-resource
+    http_status: 404
+  - url: https://platform.gist.ai/.well-known/oauth-protected-resource/mcp
+    http_status: 404
+  - url: https://platform.gist.ai/.well-known/oauth-authorization-server/mcp
+    http_status: 404
+tools: []
+tools_note: >-
+  NOT RECORDED — tools/list returns -32001 "Authorization required" anonymously, and the
+  server publishes no RFC 9728 protected-resource metadata (both /.well-known/
+  oauth-protected-resource paths 404 and the 401 carries no WWW-Authenticate header),
+  so an agent cannot discover where to authorize. No tool list is asserted here; reading
+  it requires authenticated introspection with a Gist account. The candidate tool surface
+  derivable from the OpenAPI is recorded in mcp/prorataai-tool-crosswalk.yml as rest_only.
+provenance_note: >-
+  The endpoint is served on ProRata's own host (platform.gist.ai, the Gist Developer Hub)
+  and is the documentation MCP server that ships with that hub's ReadMe SuperHub
+  deployment (readme-subdomain "prorata"). It is a real, provider-hosted agent surface for
+  the documentation; it is NOT an MCP projection of the Prorata API Service, and nothing
+  in ProRata's docs advertises one.

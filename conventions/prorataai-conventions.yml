@@ -1,0 +1,159 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/prorataai-openapi.json + https://platform.gist.ai/docs/gist-content-api +
+  live probes of https://api.gist.ai
+authentication:
+  style: api-key-as-bearer
+  header: Authorization
+  format: 'Bearer <api-key>'
+  issued_at: Publisher Group level
+  scheme_name: apiKeyAuth
+  key_tiers:
+  - public key
+  - secret key
+  key_tier_note: >-
+    POST /v1/summaries and GET /v1/summaries/{summaryId} state they accept "a valid API
+    key (public or secret)". The distinction between the two tiers is not documented
+    anywhere in the hub, and no key prefix convention is published.
+  additional_required_headers:
+  - name: X-User-ID
+    required: true
+    required_on_count: 12
+    required_on_all_except:
+    - GET /
+    - GET /v1/health
+    - POST /v1/summaries
+    - GET /v1/summaries/{summaryId}
+    description: >-
+      Unique identifier for the end user making the request. Declared as a required
+      per-operation header parameter (not a security scheme) on 12 of 16 operations.
+  see: authentication/prorataai-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  evidence: >-
+    No Idempotency-Key (or equivalent) parameter appears on any of the four POST
+    operations in the published contract, and no idempotency, retry-safety or
+    deduplication guidance appears anywhere in the developer hub. POST /v1/chat and
+    POST /v1/summaries each create a new server-side resource on every call, so a retried
+    request creates a duplicate. NO Idempotency pointer is wired into apis.yml.
+pagination:
+  style: offset-limit
+  applies_to:
+  - GET /v1/threads
+  parameters:
+  - name: startAt
+    in: query
+    type: integer
+    description: Starting index for pagination.
+  - name: maxResults
+    in: query
+    type: integer
+    description: Maximum number of results to return.
+  response_fields: []
+  note: >-
+    Only one collection endpoint exists. Pagination is described in the spec as
+    "optional pagination"; no total/next-cursor response field is declared, so a client
+    cannot tell when it has reached the end without an empty page.
+field_expansion:
+  supported: false
+sparse_fields:
+  supported: false
+metadata:
+  supported: false
+request_id_tracing:
+  supported: false
+  note: >-
+    No X-Request-Id / correlation header is declared in the contract or returned on the
+    live 401/503 responses probed on api.gist.ai.
+versioning:
+  style: uri-path
+  current: v1
+  evidence: >-
+    Every operation but the service-information root is under /v1/. info.version is
+    "1.0.0" and the ReadMe hub declares readme-version 1.0.
+  note: >-
+    The published servers[] block is the relative value "/v1" while the paths themselves
+    already begin with /v1, so a client that concatenates them naively produces
+    /v1/v1/... The working base is https://api.gist.ai — confirmed live: GET
+    https://api.gist.ai/v1/health returns a real health document.
+error_envelope:
+  rfc9457: false
+  shapes:
+  - '{ "error": string, "message": string, "statusCode": integer }'
+  - '{ "error": string, "status": integer }'
+  - '{ "error": string }'
+  see: errors/prorataai-problem-types.yml
+rate_limit_signaling:
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  status: 429
+  retry_after: false
+  see: rate-limits/prorataai-rate-limits.yml
+streaming:
+  style: server-sent-events
+  operations:
+  - GET /v1/chat/response/{threadId}/{turnId}
+  - GET /v1/summaries/{summaryId}
+  - POST /v1/chat/completions
+  note: >-
+    The docs direct browser clients to consume these with EventSource. This is the
+    provider's event surface; it is a per-request stream, not a pub/sub or webhook
+    surface, so no AsyncAPI artifact is emitted.
+dry_run_mode:
+  supported: false
+reversibility:
+  grade: none
+  applies: true
+  note: >-
+    The API has a write surface (POST /v1/chat, POST /v1/chat/completions,
+    POST /v1/summaries, DELETE /v1/threads/{threadId}), so reversibility is in scope —
+    but no reversal operation of any kind is published: there is no cancel, undo,
+    restore, void or soft-delete anywhere in the contract or the hub.
+  surfaces:
+  - operation: DELETE /v1/threads/{threadId}
+    write_class: destructive-delete
+    reversal: none
+    window: null
+    evidence: >-
+      The published description states the call "Permanently deletes a chat thread and
+      all its associated turns." No restore endpoint exists and no retention window is
+      stated. An agent calling this cannot take it back.
+    source: https://platform.gist.ai/reference/delete_v1-threads-threadid
+  - operation: POST /v1/chat
+    write_class: create
+    reversal: DELETE /v1/threads/{threadId}
+    reversal_note: >-
+      Deleting the thread removes what the chat created, but that deletion is itself
+      irreversible, so this is disposal rather than reversal.
+    window: null
+    source: https://platform.gist.ai/reference/post_v1-chat
+  - operation: POST /v1/summaries
+    write_class: create
+    reversal: none
+    window: null
+    source: https://platform.gist.ai/reference/post_v1-summaries
+  - operation: POST /ingest/article (Gist Content API)
+    write_class: create
+    reversal: none
+    window: null
+    evidence: >-
+      The ingest documentation publishes only submit-single and submit-bulk; no delete,
+      retract or takedown endpoint is documented for content already pushed into the
+      Gist Content Network.
+    source: https://platform.gist.ai/docs/gist-content-api
+caching:
+  note: >-
+    GET /v1/publishers and GET /v1/publishers/{id} are documented as Redis-cached with a
+    1-hour TTL, with cache headers included in the response. This is the only caching
+    contract published.
+cross_links:
+  errors: errors/prorataai-problem-types.yml
+  lifecycle: lifecycle/prorataai-lifecycle.yml
+  authentication: authentication/prorataai-authentication.yml
+  rate_limits: rate-limits/prorataai-rate-limits.yml

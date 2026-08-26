@@ -1,0 +1,80 @@
+generated: '2026-08-26'
+method: searched
+source: openapi/prorataai-openapi.json
+docs: https://platform.gist.ai/docs/gist-content-api
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  oauth2: false
+  openid_connect: false
+  mutual_tls: false
+  self_serve: false
+schemes:
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: Authorization
+  format: 'Bearer <api-key>'
+  description: Add your API key with the Bearer prefix (e.g., "Bearer YOUR-API-KEY")
+  sources:
+  - openapi/prorataai-openapi.json
+  - https://platform.gist.ai/docs/gist-content-api
+key_issuance:
+  self_serve: false
+  level: Publisher Group
+  process: >-
+    "API keys are provided during onboarding. Contact us if you need access." A single key
+    is issued per Publisher Group and shared by every publication under it; individual
+    publications are identified per-request instead.
+  source: https://platform.gist.ai/docs/gist-content-api
+key_tiers:
+- name: public key
+- name: secret key
+key_tier_note: >-
+  POST /v1/summaries and GET /v1/summaries/{summaryId} accept "a valid API key (public or
+  secret)". No prefix convention, rotation policy or scope difference between the two
+  tiers is documented anywhere in the hub — a real gap, recorded rather than guessed.
+additional_identity_headers:
+- name: X-User-ID
+  required: true
+  operation_count: 12
+  operations:
+  - POST /v1/chat
+  - POST /v1/chat/completions
+  - GET /v1/chat/response/{threadId}/{turnId}
+  - GET /v1/chat/citations/{threadId}/{turnId}
+  - GET /v1/chat/attributions/{threadId}/{turnId}
+  - GET /v1/threads
+  - GET /v1/threads/{threadId}
+  - DELETE /v1/threads/{threadId}
+  - GET /v1/questions/recommended
+  - POST /v1/questions/related
+  - GET /v1/publishers
+  - GET /v1/publishers/{id}
+  description: >-
+    Unique identifier for the end user making the request. Declared required: true on 12
+    of the 16 published operations — every one except GET /, GET /v1/health and the two
+    /v1/summaries operations. It is a second, mandatory identity input alongside the API
+    key, and it is easy to miss: it is a per-operation parameter, not a security scheme,
+    so a client generated from securitySchemes alone will 400.
+authorization_model:
+  scopes: false
+  scopes_note: >-
+    No OAuth scopes exist, so no scopes/ artifact is emitted. Authorization is by tenancy,
+    not permission — a key sees only its own publisher group, and POST /v1/summaries
+    additionally validates the target URL's domain against that group with an EXACT match
+    (subdomains are not automatically allowed), returning 403 otherwise.
+public_operations:
+- GET /v1/health
+- GET /
+public_note: >-
+  Both are marked "Public Endpoint: This endpoint is publicly accessible and does not
+  require authentication" in the contract, and GET https://api.gist.ai/v1/health was
+  confirmed answering anonymously during this pass.
+observed:
+  url: https://api.gist.ai/v1/publishers
+  http_status: 401
+  body: '{"error":"Unauthorized","message":"Missing or invalid Authorization header","statusCode":401}'
+  fetched: '2026-08-26'
