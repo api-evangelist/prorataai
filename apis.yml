@@ -29,49 +29,14 @@ tags:
 - Media
 - Content Licensing
 apis:
-- aid: prorataai-prorata-api-service
-  name: Prorata API Service
-  description: 'The public Gist Answers API. Chat creation and streaming completions,
-    citations and attributions for a chat turn, thread listing/retrieval/deletion,
-    recommended and related questions, URL-scoped document summarization with streaming
-    delivery, publisher-group lookup and a public service health endpoint. Authenticated
-    with an API key sent as an Authorization Bearer header, issued at the Publisher
-    Group level; rate limits are per-organization and signalled with X-RateLimit-*
-    response headers.'
-  humanURL: https://platform.gist.ai/docs/about-gist-services
-  baseURL: https://api.gist.ai
-  tags:
-  - Chat
-  - Questions
-  - Summaries
-  - Threads
-  - Publishers
-  - Health
-  x-spec-provenance: >-
-    Saved verbatim from https://dash.readme.com/api/v1/api-registry/c0mok9ckmb84e34y — the
-    ReadMe API registry document that ProRata's own developer hub loads to render its API
-    reference. The registry uuid c0mok9ckmb84e34y and filename openapi.public.yaml were
-    read out of the hub's own page state at platform.gist.ai (readme-subdomain "prorata").
-    Ownership check: info.title is "Prorata API Service", the contract's endpoints match
-    the Gist Answers features ProRata documents and sells, and the base it describes,
-    https://api.gist.ai, answers live — gist.ai is ProRata's own product domain, stated as
-    such on prorata.ai and throughout platform.gist.ai. Nothing in the document points at
-    a third party.
-  properties:
-  - type: OpenAPI
-    url: openapi/prorataai-openapi.json
-  - type: Overlay
-    url: overlays/prorataai-openapi-overlay.yaml
-  - type: Documentation
-    url: https://platform.gist.ai/docs/about-gist-services
 - aid: prorataai-gist-content-api
   name: Gist Content API (Ingest)
-  description: 'The publisher ingest API for the Gist Content Network. Publisher partners
-    push articles to ProRata in real time (POST /ingest/article) or in bulk for archived
-    content (POST /ingest/multiple_articles), authenticated with a Publisher Group
-    Bearer API key. The published documentation states a default rate limit of 10 requests
-    per minute and documents 400/401/429/500 error semantics. ProRata does not publish
-    an OpenAPI contract for this surface; the docs give relative endpoint paths only.'
+  description: >-
+    The publisher ingest API for the Gist Content Network. Publisher partners push articles to ProRata
+    in real time (POST /ingest/article) or in bulk for archived content (POST /ingest/multiple_articles),
+    authenticated with a Publisher Group Bearer API key. The published documentation states a default
+    rate limit of 10 requests per minute and documents 400/401/429/500 error semantics. ProRata does not
+    publish an OpenAPI contract for this surface; the docs give relative endpoint paths only.
   humanURL: https://platform.gist.ai/docs/gist-content-api
   baseURL: https://api.gist.ai
   tags:
@@ -81,12 +46,98 @@ apis:
   properties:
   - type: Documentation
     url: https://platform.gist.ai/docs/gist-content-api
+- aid: prorataai:prorataai-chat-api
+  name: ProRata.ai Chat API
+  description: The Chat API from ProRata.ai — 5 operation(s) for chat.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Chat
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-chat-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai:prorataai-health-api
+  name: ProRata.ai Health API
+  description: The Health API from ProRata.ai — 1 operation(s) for health.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-health-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai:prorataai-publishers-api
+  name: ProRata.ai Publishers API
+  description: The Publishers API from ProRata.ai — 2 operation(s) for publishers.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Publishers
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-publishers-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai:prorataai-questions-api
+  name: ProRata.ai Questions API
+  description: The Questions API from ProRata.ai — 2 operation(s) for questions.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Questions
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-questions-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai:prorataai-root-api
+  name: ProRata.ai Root API
+  description: The Root API from ProRata.ai — 1 operation(s) for root.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Root
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-root-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai:prorataai-summaries-api
+  name: ProRata.ai Summaries API
+  description: The Summaries API from ProRata.ai — 2 operation(s) for summaries.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Summaries
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-summaries-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
+- aid: prorataai:prorataai-threads-api
+  name: ProRata.ai Threads API
+  description: The Threads API from ProRata.ai — 2 operation(s) for threads.
+  humanURL: https://platform.gist.ai/docs/about-gist-services
+  baseURL: https://api.gist.ai
+  tags:
+  - Threads
+  properties:
+  - type: OpenAPI
+    url: openapi/prorataai-threads-api-openapi.yml
+  - type: Documentation
+    url: https://platform.gist.ai/docs/about-gist-services
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/prorataai-openapi-overlay.yaml
 - type: DomainSecurity
   url: security/prorataai-domain-security.yml
 - type: Website
