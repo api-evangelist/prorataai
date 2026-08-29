@@ -10,6 +10,17 @@ description: 'ProRata.ai is an AI attribution, search and advertising company fo
   streaming completions, citations and attributions, threads, recommended and related
   questions, document summarization, publisher lookup and service health, served from
   https://api.gist.ai behind a Bearer API key issued at the Publisher Group level.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://prorata.ai/wp-content/uploads/2026/01/prorata-OGshare-OS-1.webp
 url: https://raw.githubusercontent.com/api-evangelist/prorataai/refs/heads/main/apis.yml
 x-type: company
