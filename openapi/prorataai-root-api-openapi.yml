@@ -1,0 +1,41 @@
+openapi: 3.2.0
+info:
+  title: Prorata API Service Root API
+  version: 1.0.0
+  description: API for chat, threads, questions, and publisher management
+servers:
+- url: /v1
+  description: API v1
+tags:
+- name: Root
+paths:
+  /:
+    get:
+      tags:
+      - Root
+      summary: Get service information
+      description: '**Public Endpoint**: This endpoint is publicly accessible and does not require authentication.
+
+        Returns basic service status.
+
+        '
+      responses:
+        '200':
+          description: Basic service status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                    example: ok
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Add your API key with the Bearer prefix (e.g., "Bearer YOUR-API-KEY")

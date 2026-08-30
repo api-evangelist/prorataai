@@ -1,0 +1,335 @@
+openapi: 3.2.0
+info:
+  title: Prorata API Service Threads API
+  version: 1.0.0
+  description: API for chat, threads, questions, and publisher management
+servers:
+- url: /v1
+  description: API v1
+tags:
+- name: Threads
+paths:
+  /v1/threads:
+    get:
+      summary: List all chat threads (Advanced)
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        Returns a list of chat threads with optional pagination.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Threads
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      - in: query
+        name: startAt
+        schema:
+          type: integer
+          minimum: 0
+        description: Starting index for pagination
+      - in: query
+        name: maxResults
+        schema:
+          type: integer
+          minimum: 0
+        description: Maximum number of results to return
+      responses:
+        '200':
+          description: List of threads
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  threads:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        threadId:
+                          type: string
+                          description: Unique thread identifier
+                        threadTitle:
+                          type: string
+                          description: Title of the thread
+                        lastInteraction:
+                          type: number
+                          description: Timestamp of last interaction
+                        turns:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              turnId:
+                                type: string
+                                description: Turn identifier
+                              userPrompt:
+                                type: string
+                                description: User's question/prompt
+                              response:
+                                type: string
+                                description: AI's response
+                  total:
+                    type: number
+                    description: Total number of threads
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+  /v1/threads/{threadId}:
+    get:
+      summary: Get a specific thread (Advanced)
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        Returns detailed information about a specific chat thread.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Threads
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: string
+        description: Thread ID to retrieve
+      responses:
+        '200':
+          description: Thread details
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  threadId:
+                    type: string
+                    description: Unique thread identifier
+                  threadTitle:
+                    type: string
+                    description: Title of the thread
+                  lastInteraction:
+                    type: number
+                    description: Timestamp of last interaction
+                  turns:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        turnId:
+                          type: string
+                          description: Turn identifier
+                        userPrompt:
+                          type: string
+                          description: User's question/prompt
+                        response:
+                          type: string
+                          description: AI's response
+                        citations:
+                          type: object
+                          description: Citation information
+                        attributions:
+                          type: object
+                          description: Attribution information
+                        responseTime:
+                          type: number
+                          description: Response generation time in ms
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '404':
+          description: Thread not found
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a thread (Advanced)
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        Permanently deletes a chat thread and all its associated turns.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Threads
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: string
+        description: Thread ID to delete
+      responses:
+        '204':
+          description: Thread successfully deleted
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '404':
+          description: Thread not found
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+components:
+  headers:
+    X-RateLimit-Remaining:
+      description: Number of requests remaining in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Limit:
+      description: Maximum requests allowed in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Reset:
+      description: Unix timestamp when the rate limit resets
+      schema:
+        type: integer
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Add your API key with the Bearer prefix (e.g., "Bearer YOUR-API-KEY")

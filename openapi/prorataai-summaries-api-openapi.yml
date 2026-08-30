@@ -1,0 +1,238 @@
+openapi: 3.2.0
+info:
+  title: Prorata API Service Summaries API
+  version: 1.0.0
+  description: API for chat, threads, questions, and publisher management
+servers:
+- url: /v1
+  description: API v1
+tags:
+- name: Summaries
+paths:
+  /v1/summaries:
+    post:
+      summary: Create document summarization
+      description: '**Authentication Required**: This endpoint requires a valid API key (public or secret).
+
+
+        Creates a summarization request for the content found at the provided URL. The summary can be
+
+        customized in terms of length, medium, and style.
+
+
+        **Domain Validation**: The URL domain must exactly match one of the publisher domains associated with
+
+        your organization''s publisher group. Subdomains are not automatically allowed - the exact domain must
+
+        be authorized. This ensures that you can only summarize content from authorized publishers.
+
+
+        Use the returned summaryId with the /v1/summaries/{summaryId} endpoint
+
+        to retrieve the streaming summary.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Summaries
+      security:
+      - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - url
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: The URL to summarize content from
+                length:
+                  type: string
+                  enum:
+                  - short
+                  - medium
+                  - long
+                  default: medium
+                  description: The desired length of the summary
+                medium:
+                  type: string
+                  enum:
+                  - text
+                  - audio
+                  default: text
+                  description: The medium of the summary
+                style:
+                  type: string
+                  enum:
+                  - paragraph
+                  - bullets
+                  default: paragraph
+                  description: The style of the summary
+            example:
+              url: https://example.com/article
+              length: medium
+              medium: text
+              style: paragraph
+      responses:
+        '200':
+          description: Summary request created successfully
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summaryId:
+                    type: string
+                    description: Unique identifier for the summary request
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+                  status:
+                    type: integer
+                    description: HTTP status code
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '403':
+          description: Forbidden - URL domain not authorized for this organization
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Domain not authorized for this organization
+                    description: Error message indicating domain validation failure
+        '404':
+          description: URL content not found
+        '429':
+          description: Too Many Requests - Request rejected due to rate limiting
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+        '500':
+          description: Internal server error
+  /v1/summaries/{summaryId}:
+    get:
+      summary: Stream a document summary
+      description: '**Authentication Required**: This endpoint requires a valid API key (public or secret).
+
+
+        Streams the summary for a previously created summarization request.
+
+        Use this with EventSource in browsers for easy streaming.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Summaries
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: path
+        name: summaryId
+        required: true
+        schema:
+          type: string
+        description: The summaryId returned from the /v1/summaries endpoint
+      responses:
+        '200':
+          description: Streams the summary response as text
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                format: binary
+              example: 'data: This is a streaming response with the summary content.
+
+                data: It continues with more summary content.
+
+                data: [DONE]
+
+                '
+        '400':
+          description: Invalid summaryId
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '404':
+          description: Summary not found
+        '429':
+          description: Too Many Requests - Request rejected due to rate limiting
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+        '500':
+          description: Internal server error
+components:
+  headers:
+    X-RateLimit-Remaining:
+      description: Number of requests remaining in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Limit:
+      description: Maximum requests allowed in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Reset:
+      description: Unix timestamp when the rate limit resets
+      schema:
+        type: integer
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Add your API key with the Bearer prefix (e.g., "Bearer YOUR-API-KEY")

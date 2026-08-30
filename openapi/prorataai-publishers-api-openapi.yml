@@ -1,0 +1,187 @@
+openapi: 3.2.0
+info:
+  title: Prorata API Service Publishers API
+  version: 1.0.0
+  description: API for chat, threads, questions, and publisher management
+servers:
+- url: /v1
+  description: API v1
+tags:
+- name: Publishers
+paths:
+  /v1/publishers:
+    get:
+      summary: Get publisher information
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        Returns information about the publisher group associated with your organization, including
+
+        the publisher group ID, name, description, and a list of publisher IDs.
+
+
+        **Caching**: This endpoint uses Redis caching with a TTL of 1 hour.
+
+        - First request fetches from the external service and caches the response
+
+        - Subsequent requests within 1 hour return the cached data
+
+        - Cache headers are included in the response
+
+        '
+      tags:
+      - Publishers
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      responses:
+        '200':
+          description: Publisher group information
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: Cache control header (e.g., "public, max-age=3600")
+            Expires:
+              schema:
+                type: string
+              description: Expiration date of the cached response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Publisher group ID
+                  name:
+                    type: string
+                    description: Publisher group name
+                  description:
+                    type:
+                    - string
+                    - 'null'
+                    description: Publisher group description
+                  publishers:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                    description: Array of publisher IDs
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '500':
+          description: Internal server error
+  /v1/publishers/{id}:
+    get:
+      summary: Get specific publisher details
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        Returns detailed information about a specific publisher identified by its ID. The publisher must be
+
+        part of the publisher group associated with your organization.
+
+
+        **Caching**: This endpoint uses Redis caching with a TTL of 1 hour.
+
+        - First request fetches from the external service and caches the response
+
+        - Subsequent requests within 1 hour return the cached data
+
+        - Cache headers are included in the response
+
+        '
+      tags:
+      - Publishers
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Publisher ID to retrieve details for
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      responses:
+        '200':
+          description: Publisher details
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: Cache control header (e.g., "public, max-age=3600")
+            Expires:
+              schema:
+                type: string
+              description: Expiration date of the cached response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Publisher ID
+                  name:
+                    type: string
+                    description: Publisher name
+                  description:
+                    type:
+                    - string
+                    - 'null'
+                    description: Publisher description
+                  enabled:
+                    type: boolean
+                    description: Whether the publisher is enabled
+                  config:
+                    type: object
+                    properties:
+                      domain:
+                        type: string
+                        description: Publisher domain
+                      location:
+                        type: string
+                        description: Publisher location
+                      private_role_name:
+                        type: string
+                        description: Private role name
+                    description: Publisher configuration
+                  sites:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                    description: Array of site IDs
+        '400':
+          description: Bad request - Missing publisher ID
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '403':
+          description: Forbidden - Publisher not in organization's publisher group
+        '404':
+          description: Publisher not found
+        '500':
+          description: Internal server error
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Add your API key with the Bearer prefix (e.g., "Bearer YOUR-API-KEY")

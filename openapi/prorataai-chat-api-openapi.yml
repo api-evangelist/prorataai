@@ -1,0 +1,873 @@
+openapi: 3.2.0
+info:
+  title: Prorata API Service Chat API
+  version: 1.0.0
+  description: API for chat, threads, questions, and publisher management
+servers:
+- url: /v1
+  description: API v1
+tags:
+- name: Chat
+paths:
+  /v1/chat/attributions/{threadId}/{turnId}:
+    get:
+      summary: Get attributions for a chat response
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        **Important**: This endpoint is part of a sequential flow:
+
+        1. First call `/v1/chat` to create a chat and get `threadId` and `turnId`
+
+        2. Then get `/v1/chat/response/{threadId}/{turnId}` for the AI''s response
+
+        3. Finally use this endpoint to get attributions for that response
+
+
+        Returns a list of attributions and source documents used in the response.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Chat
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: string
+        description: Thread ID from your previous /v1/chat response
+      - in: path
+        name: turnId
+        required: true
+        schema:
+          type: string
+        description: Turn ID from your previous /v1/chat response
+      responses:
+        '200':
+          description: List of attributions for the response
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  credit_dist:
+                    type: object
+                    description: Map of source URLs to their attribution percentages
+                    additionalProperties:
+                      type: number
+                    example:
+                      string: 0
+                  domain_credit_dist:
+                    type: object
+                    description: Map of domains (e.g., example.com) to their attribution percentages
+                    additionalProperties:
+                      type: number
+                    example:
+                      string: 0
+                  document_credit_dist:
+                    type: object
+                    description: Map of document IDs (SHA-256 hashes) to their attribution percentages
+                    additionalProperties:
+                      type: number
+                    example:
+                      string: 0
+                  publisher_credit_dist:
+                    type: object
+                    description: Map of publisher UUIDs to their attribution percentages
+                    additionalProperties:
+                      type: number
+                    example:
+                      string: 0
+        '400':
+          description: Invalid thread ID or turn ID format
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '404':
+          description: Thread, turn, or attributions not found
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+  /v1/chat:
+    post:
+      summary: Create a new chat
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+        Please click the "Authorize" button and enter your API key before testing.
+
+
+        Creates a new chat thread or continues an existing one with the provided prompt.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Chat
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - user_prompt
+              properties:
+                thread_id:
+                  type: string
+                  description: Optional thread ID for continuing a conversation
+                user_prompt:
+                  type: string
+                  description: The user's question or prompt
+                temperature:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                  default: 0.7
+                  description: Controls randomness in the response (Currently not supported - this parameter will be ignored)
+                inclusion_list:
+                  type: array
+                  items:
+                    type: string
+            examples:
+              newChat:
+                summary: Start a new chat
+                value:
+                  thread_id: ''
+                  user_prompt: Why is the sky blue?
+                  temperature: 0.7
+              continueChat:
+                summary: Continue existing chat
+                value:
+                  thread_id: 123e4567-e89b-12d3-a456-426614174000
+                  user_prompt: What about during sunset?
+                  temperature: 0.7
+      responses:
+        '200':
+          description: Chat created successfully
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  thread_id:
+                    type: string
+                    description: Unique thread identifier
+                  turn_id:
+                    type: number
+                    description: Turn number in the conversation
+                  thread_title:
+                    type: string
+                    description: Optional title for the thread
+                  citations:
+                    type: object
+                    description: Citation information for the response
+                  attributions:
+                    type: object
+                    description: Attribution information for the response
+                  response_time:
+                    type: number
+                    description: Response generation time in milliseconds
+              examples:
+                success:
+                  summary: Successful response
+                  value:
+                    thread_id: 123e4567-e89b-12d3-a456-426614174000
+                    turn_id: 1
+                    thread_title: Discussion about the sky
+                    citations: {}
+                    attributions: {}
+                    response_time: 1234
+        '400':
+          description: Bad request - Missing user_prompt
+        '401':
+          description: Unauthorized - Invalid or missing authentication
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+  /v1/chat/citations/{threadId}/{turnId}:
+    get:
+      summary: Get citations for a chat response
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        **Important**: This endpoint is part of a sequential flow:
+
+        1. First call `/v1/chat` to create a chat and get `threadId` and `turnId`
+
+        2. Then get `/v1/chat/response/{threadId}/{turnId}` for the AI''s response
+
+        3. Finally use this endpoint to get citations for that response
+
+
+        Returns a list of citations and source documents used in the response.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Chat
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: string
+        description: Thread ID from your previous /v1/chat response
+      - in: path
+        name: turnId
+        required: true
+        schema:
+          type: string
+        description: Turn ID from your previous /v1/chat response
+      responses:
+        '200':
+          description: List of citations for the response
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    citationId:
+                      type: number
+                      description: Unique identifier for the citation
+                    id:
+                      type: string
+                      description: Document identifier
+                    publisher_id:
+                      type: string
+                      description: Publisher identifier
+                    url:
+                      type: string
+                      description: Source document URL
+                    domain:
+                      type: string
+                      description: Publisher domain
+                    title:
+                      type: string
+                      description: Document title
+                    date:
+                      type: string
+                      description: Publication date
+                    source:
+                      type: string
+                      description: Source name
+                    first_words:
+                      type: string
+                      description: Opening text of the document
+                    image:
+                      type: string
+                      description: Document image URL
+                    favicon:
+                      type: string
+                      description: Publisher favicon URL
+                    favicon40:
+                      type: string
+                      description: 40px favicon URL
+                    favicon24:
+                      type: string
+                      description: 24px favicon URL
+        '400':
+          description: Invalid thread ID or turn ID format
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '404':
+          description: Thread, turn, or citations not found
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+  /v1/chat/completions:
+    post:
+      summary: Stream AI completions (Experimental)
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+        Please click the "Authorize" button and enter your API key before testing.
+
+
+        Streams AI-generated completions based on provided messages. (Experimental)
+
+        Each generating event contains only the new content (delta) to append.
+
+
+        **Conversation Handling**: To continue a conversation, include an assistant message with metadata from the previous response.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Chat
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - messages
+              properties:
+                messages:
+                  type: array
+                  items:
+                    oneOf:
+                    - type: object
+                      required:
+                      - role
+                      - content
+                      properties:
+                        role:
+                          type: string
+                          enum:
+                          - user
+                          description: Role of the message sender
+                        content:
+                          type: string
+                          description: User message content
+                    - type: object
+                      required:
+                      - role
+                      - metadata
+                      properties:
+                        role:
+                          type: string
+                          enum:
+                          - assistant
+                          description: Role of the assistant
+                        content:
+                          type: string
+                          description: Optional assistant message content
+                        metadata:
+                          type: object
+                          required:
+                          - thread_id
+                          - turn_id
+                          properties:
+                            thread_id:
+                              type: string
+                              description: Thread ID from previous response metadata
+                            turn_id:
+                              oneOf:
+                              - type: string
+                              - type: number
+                              description: Turn ID from previous response metadata
+                temperature:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                  default: 0.7
+                  description: Controls randomness in the response (Currently not supported - this parameter will be ignored)
+                stream:
+                  type: boolean
+                  default: true
+                  description: Whether to stream the response (Currently not configurable - responses are always streamed)
+            examples:
+              newConversation:
+                summary: Starting a new conversation
+                value:
+                  messages:
+                  - role: user
+                    content: Why is the sky blue?
+                  temperature: 0.7
+              continueConversation:
+                summary: Continuing an existing conversation
+                value:
+                  messages:
+                  - role: user
+                    content: What about during sunset?
+                  - role: assistant
+                    metadata:
+                      thread_id: 123e4567-e89b-12d3-a456-426614174000
+                      turn_id: 1
+                  temperature: 0.7
+      responses:
+        '200':
+          description: Successful response with streaming content
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            text/event-stream:
+              schema:
+                type: object
+                properties:
+                  event:
+                    type: string
+                    enum:
+                    - metadata
+                    - generating
+                    - complete
+                    description: Event type - metadata for thread info, generating for partial responses, complete for final
+                  data:
+                    type: object
+                    properties:
+                      threadId:
+                        type: string
+                        description: Unique thread identifier (only in metadata event)
+                      turnId:
+                        type: string
+                        description: Turn identifier (only in metadata event)
+                      title:
+                        type: string
+                        description: Optional thread title (only in metadata event)
+                      content:
+                        type: string
+                        description: The response text chunk (only in generating/complete events)
+                      response_time:
+                        type: number
+                        description: Total response time in ms (only in complete event)
+              examples:
+                newConversationResponse:
+                  summary: Response to a new conversation
+                  value: 'event: metadata
+
+                    data: {"threadId": "123e4567-e89b-12d3-a456-426614174000", "turnId": "1", "title": "Why is the sky blue?"}
+
+
+                    event: generating
+
+                    data: {"content": "The"}
+
+
+                    event: generating
+
+                    data: {"content": " sky"}
+
+
+                    event: generating
+
+                    data: {"content": " appears"}
+
+
+                    event: generating
+
+                    data: {"content": " blue"}
+
+
+                    event: complete
+
+                    '
+                continuedConversationResponse:
+                  summary: Response to a continued conversation
+                  value: 'event: metadata
+
+                    data: {"threadId": "123e4567-e89b-12d3-a456-426614174000", "turnId": "2", "title": "Why is the sky blue?"}
+
+
+                    event: generating
+
+                    data: {"content": "During"}
+
+
+                    event: generating
+
+                    data: {"content": " sunset"}
+
+
+                    event: generating
+
+                    data: {"content": ","}
+
+
+                    event: generating
+
+                    data: {"content": " the"}
+
+
+                    event: generating
+
+                    data: {"content": " sky"}
+
+
+                    event: complete
+
+                    '
+        '400':
+          description: Bad request - Missing required fields
+        '401':
+          description: Unauthorized - Invalid or missing authentication
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+  /v1/chat/response/{threadId}/{turnId}:
+    get:
+      summary: Stream chat response
+      description: '**Authentication Required**: This endpoint requires a valid API key.
+
+
+        **Important**: This endpoint is part of a sequential flow:
+
+        1. First call `/v1/chat` to create a chat and get `threadId` and `turnId`
+
+        2. Then use those IDs from the response to stream the AI''s response
+
+        3. Optionally fetch citations and attributions after
+
+
+        The response streams as Server-Sent Events (SSE) with a metadata event followed by
+
+        multiple generating events and a final complete event. Each generating event contains
+
+        only the new content (delta) to append.
+
+
+        **Rate Limiting**: This endpoint is subject to rate limiting based on your organization''s settings.
+
+        The response headers will include:
+
+        - `X-RateLimit-Limit`: Maximum requests allowed in the current time window
+
+        - `X-RateLimit-Remaining`: Number of requests remaining
+
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
+
+        '
+      tags:
+      - Chat
+      security:
+      - apiKeyAuth: []
+      parameters:
+      - in: header
+        name: X-User-ID
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the user making the request
+      - in: path
+        name: threadId
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Thread ID from your previous /v1/chat response
+      - in: path
+        name: turnId
+        required: true
+        schema:
+          type: string
+        description: Turn ID from your previous /v1/chat response
+      responses:
+        '200':
+          description: Streams the response as Server-Sent Events
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            text/event-stream:
+              schema:
+                type: object
+                properties:
+                  event:
+                    type: string
+                    enum:
+                    - metadata
+                    - generating
+                    - complete
+                    description: Event type - metadata for thread info, generating for partial responses, complete for final
+                  data:
+                    type: object
+                    properties:
+                      threadId:
+                        type: string
+                        description: Unique thread identifier (only in metadata event)
+                      turnId:
+                        type: string
+                        description: Turn identifier (only in metadata event)
+                      title:
+                        type: string
+                        description: Optional thread title (only in metadata event)
+                      content:
+                        type: string
+                        description: The response text chunk (only in generating/complete events)
+                      response_time:
+                        type: number
+                        description: Total response time in ms (only in complete event)
+              examples:
+                response:
+                  summary: Example response stream
+                  value: 'event: metadata
+
+                    data: {"threadId": "123e4567-e89b-12d3-a456-426614174000", "turnId": "1", "title": "Discussion about the sky"}
+
+
+                    event: generating
+
+                    data: {"content": "The"}
+
+
+                    event: generating
+
+                    data: {"content": " sky"}
+
+
+                    event: generating
+
+                    data: {"content": " appears"}
+
+
+                    event: generating
+
+                    data: {"content": " blue"}
+
+
+                    event: generating
+
+                    data: {"content": " because"}
+
+
+                    event: generating
+
+                    data: {"content": " of"}
+
+
+                    event: generating
+
+                    data: {"content": " Rayleigh"}
+
+
+                    event: generating
+
+                    data: {"content": " scattering"}
+
+
+                    event: complete
+
+                    '
+        '400':
+          description: Invalid thread ID or turn ID format
+        '401':
+          description: Unauthorized - Invalid or missing API key
+        '404':
+          description: Thread or turn not found
+        '429':
+          description: Too Many Requests - Your request was rejected due to rate limit restrictions
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    example: Rate limit exceeded
+                  statusCode:
+                    type: integer
+                    example: 429
+        '500':
+          description: Internal server error
+components:
+  headers:
+    X-RateLimit-Remaining:
+      description: Number of requests remaining in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Limit:
+      description: Maximum requests allowed in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Reset:
+      description: Unix timestamp when the rate limit resets
+      schema:
+        type: integer
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Add your API key with the Bearer prefix (e.g., "Bearer YOUR-API-KEY")
