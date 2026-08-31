@@ -123,6 +123,8 @@ apis:
   humanURL: https://platform.gist.ai/docs/about-gist-services
   baseURL: https://api.gist.ai
   tags:
+  - Summary
+  tags_raw:
   - Summaries
   properties:
   - type: OpenAPI
