@@ -1,0 +1,39 @@
+{
+  "provider": "prorataai",
+  "sources": [
+    "_original/prorataai-openapi.json"
+  ],
+  "outputs": [
+    "prorataai-chat-api-openapi.yml",
+    "prorataai-health-api-openapi.yml",
+    "prorataai-publishers-api-openapi.yml",
+    "prorataai-questions-api-openapi.yml",
+    "prorataai-root-api-openapi.yml",
+    "prorataai-summaries-api-openapi.yml",
+    "prorataai-threads-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "prorataai-openapi.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "prorataai-openapi.json: declared missing tag: Chat",
+    "prorataai-openapi.json: declared missing tag: Health",
+    "prorataai-openapi.json: declared missing tag: Publishers",
+    "prorataai-openapi.json: declared missing tag: Questions",
+    "prorataai-openapi.json: declared missing tag: Root",
+    "prorataai-openapi.json: declared missing tag: Summaries",
+    "prorataai-openapi.json: declared missing tag: Threads",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "prorataai-chat-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "prorataai-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "prorataai-publishers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "prorataai-questions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "prorataai-root-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "prorataai-summaries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "prorataai-threads-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

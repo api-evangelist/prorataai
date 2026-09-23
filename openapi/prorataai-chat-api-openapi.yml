@@ -35,9 +35,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Chat
       security:
@@ -135,6 +133,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: getV1ChatAttributionsByThreadIdByTurnId
+      x-operation-id-source: derived
   /v1/chat:
     post:
       summary: Create a new chat
@@ -154,9 +154,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Chat
       security:
@@ -278,6 +276,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: postV1Chat
+      x-operation-id-source: derived
   /v1/chat/citations/{threadId}/{turnId}:
     get:
       summary: Get citations for a chat response
@@ -304,9 +304,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Chat
       security:
@@ -417,6 +415,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: getV1ChatCitationsByThreadIdByTurnId
+      x-operation-id-source: derived
   /v1/chat/completions:
     post:
       summary: Stream AI completions (Experimental)
@@ -441,9 +441,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Chat
       security:
@@ -672,6 +670,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: postV1ChatCompletions
+      x-operation-id-source: derived
   /v1/chat/response/{threadId}/{turnId}:
     get:
       summary: Stream chat response
@@ -702,9 +702,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Chat
       security:
@@ -851,6 +849,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: getV1ChatResponseByThreadIdByTurnId
+      x-operation-id-source: derived
 components:
   headers:
     X-RateLimit-Remaining:

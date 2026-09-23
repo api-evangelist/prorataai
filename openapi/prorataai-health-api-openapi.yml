@@ -16,9 +16,7 @@ paths:
       summary: Get detailed service health status
       description: '**Public Endpoint**: This endpoint is publicly accessible and does not require authentication.
 
-        Returns detailed health status of the service and its dependencies.
-
-        '
+        Returns detailed health status of the service and its dependencies.'
       responses:
         '200':
           description: Service is healthy
@@ -93,6 +91,8 @@ paths:
                             - failed
         '500':
           description: Internal server error
+      operationId: getV1Health
+      x-operation-id-source: derived
 components:
   securitySchemes:
     apiKeyAuth:

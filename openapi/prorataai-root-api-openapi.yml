@@ -16,9 +16,7 @@ paths:
       summary: Get service information
       description: '**Public Endpoint**: This endpoint is publicly accessible and does not require authentication.
 
-        Returns basic service status.
-
-        '
+        Returns basic service status.'
       responses:
         '200':
           description: Basic service status
@@ -32,6 +30,8 @@ paths:
                     enum:
                     - ok
                     example: ok
+      operationId: getRoot
+      x-operation-id-source: derived
 components:
   securitySchemes:
     apiKeyAuth:

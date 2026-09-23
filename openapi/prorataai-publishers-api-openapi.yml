@@ -26,9 +26,7 @@ paths:
 
         - Subsequent requests within 1 hour return the cached data
 
-        - Cache headers are included in the response
-
-        '
+        - Cache headers are included in the response'
       tags:
       - Publishers
       security:
@@ -79,6 +77,8 @@ paths:
           description: Unauthorized - Invalid or missing API key
         '500':
           description: Internal server error
+      operationId: getV1Publishers
+      x-operation-id-source: derived
   /v1/publishers/{id}:
     get:
       summary: Get specific publisher details
@@ -96,9 +96,7 @@ paths:
 
         - Subsequent requests within 1 hour return the cached data
 
-        - Cache headers are included in the response
-
-        '
+        - Cache headers are included in the response'
       tags:
       - Publishers
       security:
@@ -178,6 +176,8 @@ paths:
           description: Publisher not found
         '500':
           description: Internal server error
+      operationId: getV1PublishersById
+      x-operation-id-source: derived
 components:
   securitySchemes:
     apiKeyAuth:

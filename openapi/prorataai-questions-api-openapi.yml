@@ -26,9 +26,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Questions
       security:
@@ -101,6 +99,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: getV1QuestionsRecommended
+      x-operation-id-source: derived
   /v1/questions/related:
     post:
       summary: Get related questions
@@ -118,9 +118,7 @@ paths:
 
         - `X-RateLimit-Remaining`: Number of requests remaining
 
-        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets
-
-        '
+        - `X-RateLimit-Reset`: Unix timestamp when the rate limit resets'
       tags:
       - Questions
       security:
@@ -217,6 +215,8 @@ paths:
                     example: 429
         '500':
           description: Internal server error
+      operationId: postV1QuestionsRelated
+      x-operation-id-source: derived
 components:
   headers:
     X-RateLimit-Remaining:
