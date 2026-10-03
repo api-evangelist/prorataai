@@ -319,12 +319,12 @@ components:
       description: Number of requests remaining in the current time window
       schema:
         type: integer
-    X-RateLimit-Reset:
-      description: Unix timestamp when the rate limit resets
-      schema:
-        type: integer
     X-RateLimit-Limit:
       description: Maximum requests allowed in the current time window
+      schema:
+        type: integer
+    X-RateLimit-Reset:
+      description: Unix timestamp when the rate limit resets
       schema:
         type: integer
   securitySchemes:
