@@ -1,4 +1,4 @@
-# Prorataai
+# ProRata.ai
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,5 +64,125 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Prorataai is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.hiive.com/securities/prorataai-stock
+ProRata.ai is an AI attribution, search and advertising company founded in 2024 by Idealab founder Bill Gross. It operates the Gist family of products — Gist Answers (an embeddable, publisher-hosted AI answer widget), Gist Content Network (a licensed publisher content corpus with revenue share), Gist Ads (advertising placed inside AI answer surfaces) and Gist GEO (generative-engine-optimization visibility tracking). Its developer surface is the Gist Developer Hub at platform.gist.ai, which publishes a public OpenAPI 3.0 contract — the "Prorata API Service" — covering chat, streaming completions, citations and attributions, threads, recommended and related questions, document summarization, publisher lookup and service health, served from https://api.gist.ai behind a Bearer API key issued at the Publisher Group level.
+
+**Areas:** Artificial Intelligence · Search · Content · Publishing · Advertising · Attribution · Answer Engines · Generative AI · Media · Content Licensing
+
+## ProRata.ai on APIs.io
+
+Everything profiled for ProRata.ai is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/prorataai/](https://apis.io/providers/prorataai/)** — or go straight to one of the APIs or properties below.
+
+### APIs (8)
+
+- [Gist Content API (Ingest)](https://apis.io/apis/prorataai/prorataai-gist-content-api/) — The publisher ingest API for the Gist Content Network. Publisher partners push articles to ProRata in real time (POST /ingest/article) or in bulk for…
+- [ProRata.ai Chat API](https://apis.io/apis/prorataai/prorataai-chat-api/) — The Chat API from ProRata.ai — 5 operation(s) for chat.
+- [ProRata.ai Health API](https://apis.io/apis/prorataai/prorataai-health-api/) — The Health API from ProRata.ai — 1 operation(s) for health.
+- [ProRata.ai Publishers API](https://apis.io/apis/prorataai/prorataai-publishers-api/) — The Publishers API from ProRata.ai — 2 operation(s) for publishers.
+- [ProRata.ai Questions API](https://apis.io/apis/prorataai/prorataai-questions-api/) — The Questions API from ProRata.ai — 2 operation(s) for questions.
+- [ProRata.ai Root API](https://apis.io/apis/prorataai/prorataai-root-api/) — The Root API from ProRata.ai — 1 operation(s) for root.
+- [ProRata.ai Summaries API](https://apis.io/apis/prorataai/prorataai-summaries-api/) — The Summaries API from ProRata.ai — 2 operation(s) for summaries.
+- [ProRata.ai Threads API](https://apis.io/apis/prorataai/prorataai-threads-api/) — The Threads API from ProRata.ai — 2 operation(s) for threads.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Gist Developer Hub MCP](https://apis.io/servers/prorataai/gist-developer-hub-mcp/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Prorataai Openapi Overlay](https://apis.io/overlays/prorataai/prorataai-openapi-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Prorataai Authentication](https://apis.io/security/prorataai/prorataai-authentication/)
+- [Prorataai Domain Security](https://apis.io/security/prorataai/prorataai-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Prorataai Plans Pricing](https://apis.io/plans/prorataai/prorataai-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Prorataai Rate Limits](https://apis.io/rate-limits/prorataai/prorataai-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://prorata.ai/)
+- [Documentation](https://platform.gist.ai/docs/about-gist-services)
+- [Getting started](https://platform.gist.ai/docs/quick-start-using-widgets)
+- [Sign up](https://console.gist.ai/auth/signin)
+- [Support](https://gist.ai/contact)
+- [Blog](https://gist.ai/get-the-gist)
+- [Terms of service](https://gist.ai/terms-of-use)
+- [Privacy policy](https://gist.ai/privacy-policy)
+- [GitHub](https://github.com/prorata-ai)
+
+## API Evangelist rating
+
+**Kin Score 38.5** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 45.6 |
+| Contract governance | 18.2 |
+| Operational transparency | 23.7 |
+| Developer ergonomics | 50.6 |
+| Access clarity | 21.1 |
+
+**Agent readiness 35.9** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | verified |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 22.7** — AI & Biometrics
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/prorataai/](https://apis.io/providers/prorataai/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for ProRata.ai: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/prorataai/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
